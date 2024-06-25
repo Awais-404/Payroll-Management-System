@@ -1,7 +1,14 @@
+#pragma once
 #include <iostream>
 #include <vector>
+#include <fstream>
 #include <iomanip>
 using namespace std;
+
+class Employee;
+
+vector<Employee> employees;
+vector<pair<string,int>> basepays;
 
 class Employee
 {
@@ -29,12 +36,12 @@ Employee::Employee(int srno, string name, string id, string position, float gros
     Name = name;
     ID = id;
     Position = position;
-    Gross_Salary = base + bonus;
+    Gross_Salary = base;
     Base_Salary = base;
     Bonus = bonus;
     Tax = tax;
     Fine = fine;
-    Deductions = Tax + Fine;
+    Deductions = deduction;
     Net_salary = net;
 }
 
@@ -59,3 +66,48 @@ void Employee::display()
     cout<<endl;
     cout<<setw(15)<<"Net Salary"<<setw(5)<<":"<<Net_salary<<endl;
 }
+
+void get_employee_data()
+{
+    int srno;
+    string name, id, position;
+    float gross, base, bonus, deduction, tax, fine, net;
+    ifstream emp("Employee Data.csv");
+    for(int i=0; !emp.eof(); i++){
+    emp >> srno;
+    getline(emp,id,'\t');
+    getline(emp,name,'\t');
+    getline(emp,position,'\t');
+    emp >> gross;
+    emp >> base;
+    emp >> bonus;
+    emp >> deduction;
+    emp >> tax;
+    emp >> fine;
+    emp >> net;
+    employees.push_back(Employee (srno, name, id, position, gross, base, bonus, deduction, tax, fine, net));
+    }
+    emp.close();
+}
+void get_base_pays()
+{
+    string position, pay;
+    ifstream bp("Base Pays.csv");
+    for(int i=0; !bp.eof(); i++){
+        getline(bp,position,'\t');
+        getline(bp,pay,'\n');
+        basepays[i].first = position;
+        basepays[i].second = stof(pay);
+    }
+    bp.close();
+}
+
+// void save_employee_data()
+// {
+//     ofstream emp("Employee Data.csv");
+//     for (int i = 0; i < employees.size(); i++)
+//     {
+//         emp<<employees[i].Sr_No<<"\t"<<employees[i].ID<<"\t"<<employees[i].Name<<"\t"<<employees[i].Position<<"\t"<<employees[i].Gross_Salary<<"\t"<<employees[i].Base_Salary<<"\t"<<employees[i].Bonus<<"\t"<<employees[i].Deductions<<"\t"<<employees[i].Tax<<"\t"<<employees[i].Fine<<"\t"<<employees[i].Net_salary<<endl;
+//     }
+//     emp.close();
+// }

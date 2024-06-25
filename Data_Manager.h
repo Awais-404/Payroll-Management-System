@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -9,17 +10,23 @@ vector<pair<string,int>> basepays;
 
 void get_employee_data()
 {
-    string srno, name, id, position, gross, base, bonus, deduction, tax, fine, net;
+    int srno;
+    string name, id, position;
+    float gross, base, bonus, deduction, tax, fine, net;
     ifstream emp("Employee Data.csv");
     for(int i=0; !emp.eof(); i++){
-    getline(emp,srno,'\t');
+    emp >> srno;
     getline(emp,id,'\t');
     getline(emp,name,'\t');
     getline(emp,position,'\t');
-    getline(emp,gross,'\t');
-    getline(emp,base,'\t');
-    getline(emp,bonus,'\t');
-    employee.push_back(Employee(stof(srno), name, id, position, stof(gross), stof(base), stof(bonus), stof(deduction), stof(tax), stof(fine), stof(net)));
+    emp >> gross;
+    emp >> base;
+    emp >> bonus;
+    emp >> deduction;
+    emp >> tax;
+    emp >> fine;
+    emp >> net;
+    employee.push_back(Employee(srno, name, id, position, gross, base, bonus, deduction, tax, fine, net));
     }
     emp.close();
 }
