@@ -4,10 +4,9 @@
 using namespace std;
 
 main(){
-    vector<Employee> employee;
     cout<<left;
-    Employee emp("awais","bsse188","manager",45245,32532,25432,2435325,23543,234,234235);
-    emp.display();
+    Employee emp(1,"awais","bsse188","manager",45245,32532,25432,2435325,23543,234,234235);
+    emp.show();
     system("pause");
     return 0;
 }

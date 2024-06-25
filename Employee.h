@@ -1,21 +1,31 @@
 #include <iostream>
+#include <vector>
 #include <iomanip>
 using namespace std;
 
 class Employee
 {
-private:
-    string Name, ID, Position;
-    float Gross_Salary, Base_Salary, Bonus, Deductions,  Tax, Fine, Net_salary;
 public:
-    Employee(string name, string id, string position, float gross, float base, float bonus, float deduction, float tax, float fine, float net);
+    int Sr_No;
+    string Name, ID, Position;
+    float Gross_Salary, Base_Salary, Bonus=0, Deductions,  Tax, Fine=0, Net_salary;
+public:
+    Employee(int srno, string name, string id, string position, float gross, float base, float bonus, float deduction, float tax, float fine, float net);
+    Employee(string name, string position);
 
     void show();
     void display();
 };
 
-Employee::Employee(string name, string id, string position, float gross, float base, float bonus, float deduction, float tax, float fine, float net)
+Employee::Employee(string name, string position)
 {
+    Name = name;
+    Position = position;
+}
+
+Employee::Employee(int srno, string name, string id, string position, float gross, float base, float bonus, float deduction, float tax, float fine, float net)
+{
+    Sr_No = srno;
     Name = name;
     ID = id;
     Position = position;
@@ -30,7 +40,7 @@ Employee::Employee(string name, string id, string position, float gross, float b
 
 void Employee::show()
 {
-    cout<<setw(10)<<1<<setw(20)<<ID<<setw(20)<<Name<<setw(15)<<Position<<endl;
+    cout<<setw(10)<<Sr_No<<setw(20)<<ID<<setw(20)<<Name<<setw(15)<<Position<<endl;
 }
 
 void Employee::display()
