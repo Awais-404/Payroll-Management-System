@@ -1,14 +1,11 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include <string>
 #include <fstream>
 #include <iomanip>
+#include <conio.h>
 using namespace std;
-
-class Employee;
-
-vector<Employee> employees;
-vector<pair<string,int>> basepays;
 
 class Employee
 {
@@ -17,11 +14,13 @@ public:
     string Name, ID, Position;
     float Gross_Salary, Base_Salary, Bonus=0, Deductions,  Tax, Fine=0, Net_salary;
 public:
+    Employee(){}
     Employee(int srno, string name, string id, string position, float gross, float base, float bonus, float deduction, float tax, float fine, float net);
     Employee(string name, string position);
 
     void show();
     void display();
+    void edit();
 };
 
 Employee::Employee(string name, string position)
@@ -67,47 +66,36 @@ void Employee::display()
     cout<<setw(15)<<"Net Salary"<<setw(5)<<":"<<Net_salary<<endl;
 }
 
-void get_employee_data()
+void Employee::edit()
 {
-    int srno;
-    string name, id, position;
-    float gross, base, bonus, deduction, tax, fine, net;
-    ifstream emp("Employee Data.csv");
-    for(int i=0; !emp.eof(); i++){
-    emp >> srno;
-    getline(emp,id,'\t');
-    getline(emp,name,'\t');
-    getline(emp,position,'\t');
-    emp >> gross;
-    emp >> base;
-    emp >> bonus;
-    emp >> deduction;
-    emp >> tax;
-    emp >> fine;
-    emp >> net;
-    employees.push_back(Employee (srno, name, id, position, gross, base, bonus, deduction, tax, fine, net));
-    }
-    emp.close();
-}
-void get_base_pays()
-{
-    string position, pay;
-    ifstream bp("Base Pays.csv");
-    for(int i=0; !bp.eof(); i++){
-        getline(bp,position,'\t');
-        getline(bp,pay,'\n');
-        basepays[i].first = position;
-        basepays[i].second = stof(pay);
-    }
-    bp.close();
-}
+    cout<<"choose which field you want to edit:"<<endl;
+    cout<<"1-Name\t2-Position"<<endl;
+    cout<<"3-Bonus\t4-Fine"<<endl;
+    cout<<"Press Esc to exit edit mode..."<<endl;
+    int op = getch();
+    switch (op)
+    {
+    case 1:
+        cout<<"Enter new Name"<<endl;
+        getline(cin,Name);
+        break;
+    case 2:
+        cout<<"Enter new Position"<<endl;
+        getline(cin,Position);
+        break;
+    case 3:
+        cout<<"Enter new Bonus"<<endl;
+        cin >> Bonus;
+        break;
+    case 4:
+        cout<<"Enter new Fine"<<endl;
+        cin >> Fine;
+        break;
+    case '27':
+        break;
 
-// void save_employee_data()
-// {
-//     ofstream emp("Employee Data.csv");
-//     for (int i = 0; i < employees.size(); i++)
-//     {
-//         emp<<employees[i].Sr_No<<"\t"<<employees[i].ID<<"\t"<<employees[i].Name<<"\t"<<employees[i].Position<<"\t"<<employees[i].Gross_Salary<<"\t"<<employees[i].Base_Salary<<"\t"<<employees[i].Bonus<<"\t"<<employees[i].Deductions<<"\t"<<employees[i].Tax<<"\t"<<employees[i].Fine<<"\t"<<employees[i].Net_salary<<endl;
-//     }
-//     emp.close();
-// }
+    default:
+        edit();
+        break;
+    }
+}
