@@ -5,6 +5,8 @@
 #include <fstream>
 #include <iomanip>
 #include <conio.h>
+#include <ctime>
+#include "Data_Manager.h"
 using namespace std;
 
 class Employee
@@ -17,17 +19,14 @@ public:
     Employee(){}
     Employee(int srno, string name, string id, string position, float gross, float base, float bonus, float deduction, float tax, float fine, float net);
     Employee(string name, string position);
+    void make_id();
+    void set_base_pay();
+    void set_tax();
 
     void show();
     void display();
     void edit();
 };
-
-Employee::Employee(string name, string position)
-{
-    Name = name;
-    Position = position;
-}
 
 Employee::Employee(int srno, string name, string id, string position, float gross, float base, float bonus, float deduction, float tax, float fine, float net)
 {
@@ -35,13 +34,81 @@ Employee::Employee(int srno, string name, string id, string position, float gros
     Name = name;
     ID = id;
     Position = position;
-    Gross_Salary = base;
+    Gross_Salary = gross;
     Base_Salary = base;
     Bonus = bonus;
     Tax = tax;
     Fine = fine;
     Deductions = deduction;
     Net_salary = net;
+}
+
+Employee::Employee(string name, string position)
+{
+    Name = name;
+    Position = position;
+    set_case(Position);
+    make_id();
+    Bonus = 0;
+    Fine = 0;
+    set_base_pay();
+    Gross_Salary = Base_Salary;
+    set_tax();
+    Deductions = Tax;
+    Net_salary = Gross_Salary - Deductions;
+}
+
+void Employee::make_id(){
+    int a=0;
+    for(int i = 0; i < Position.length(); i++){
+        if ((i==0 || Position[i-1]==' ' || Position[i-1]=='.')&&(a<2)){
+            ID.append(&Position[i]);
+            a++;
+        }
+    }
+    string s;
+    time_t now = time(0);
+    tm ltm = *localtime(&now);
+    char c[5];
+    strftime(c, 5, "%y", &ltm);
+    s = c;
+    ID.append(s);
+    a=0;
+    for(int i = 0; i < employee.size(); i++){
+        if(Position == employee[i].Position){
+            a++;
+        }
+    }
+    ID.append(to_string(a+1));
+}
+
+void Employee::set_base_pay(){
+    bool found = false;
+    for (int i = 0; i < basepays.size(); i++)
+    {
+        if(Position == basepays[i].first){
+            Base_Salary = basepays[i].second;
+            found = true;
+            break;
+        }
+    }
+    if (found==false)
+    {
+        cout<<"Position not found in data base\nEnter base salary for "<<Position<<" position"<<endl;
+        cin>>Base_Salary;
+    }
+}
+
+void Employee::set_tax(){
+    for (int i = 0; i < 6; i++)
+    {
+        if (Gross_Salary < taxes[i][0])
+        {
+            Tax = taxes[i][1] + (((Gross_Salary-taxes[i-1][0])*taxes[i][2])/100);
+        }
+        
+    }
+    Tax = taxes[7][1] + (((Gross_Salary-taxes[6][0])*taxes[7][2])/100);
 }
 
 void Employee::show()
@@ -75,23 +142,23 @@ void Employee::edit()
     int op = getch();
     switch (op)
     {
-    case 1:
+    case '1':
         cout<<"Enter new Name"<<endl;
         getline(cin,Name);
         break;
-    case 2:
+    case '2':
         cout<<"Enter new Position"<<endl;
         getline(cin,Position);
         break;
-    case 3:
+    case '3':
         cout<<"Enter new Bonus"<<endl;
         cin >> Bonus;
         break;
-    case 4:
+    case '4':
         cout<<"Enter new Fine"<<endl;
         cin >> Fine;
         break;
-    case '27':
+    case 27:
         break;
 
     default:
