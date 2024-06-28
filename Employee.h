@@ -6,18 +6,40 @@
 #include <iomanip>
 #include <conio.h>
 #include <ctime>
-#include "Data_Manager.h"
+#include <utility>
 using namespace std;
+
+class Employee;
+
+vector<Employee> employee;
+vector<Employee> searchV;
+Employee *emp;
+vector<pair<string,double>> basepays;
+float taxes[6][3] = {{50000,0,0},
+                    {100000,0,0.025},
+                    {200000,1250,0.125},
+                    {300000,13750,0.225},
+                    {500000,36250,0.275},
+                    {00,91250,0.35}};
+
+void get_employee_data();
+void get_base_pays();
+void get_employee_data();
+void get_base_pays();
+void sort_employees();
+void save_employee_data();
+void search_by_id();
+void set_case(string &str);
 
 class Employee
 {
 public:
     int Sr_No;
-    string Name, ID, Position;
+    string Name, ID, Position, Password;
     float Gross_Salary, Base_Salary, Bonus=0, Deductions,  Tax, Fine=0, Net_salary;
 public:
     Employee(){}
-    Employee(int srno, string name, string id, string position, float gross, float base, float bonus, float deduction, float tax, float fine, float net);
+    Employee(int srno, string name, string id, string position, float gross, float base, float bonus, float deduction, float tax, float fine, float net, string password);
     Employee(string name, string position);
     void make_id();
     void set_base_pay();
@@ -26,9 +48,10 @@ public:
     void show();
     void display();
     void edit();
+    void change_password();
 };
 
-Employee::Employee(int srno, string name, string id, string position, float gross, float base, float bonus, float deduction, float tax, float fine, float net)
+Employee::Employee(int srno, string name, string id, string position, float gross, float base, float bonus, float deduction, float tax, float fine, float net, string password)
 {
     Sr_No = srno;
     Name = name;
@@ -41,6 +64,7 @@ Employee::Employee(int srno, string name, string id, string position, float gros
     Fine = fine;
     Deductions = deduction;
     Net_salary = net;
+    Password = password;
 }
 
 Employee::Employee(string name, string position)
@@ -50,26 +74,29 @@ Employee::Employee(string name, string position)
     set_case(Position);
     make_id();
     Bonus = 0;
-    Fine = 0;
     set_base_pay();
     Gross_Salary = Base_Salary;
+    Tax = 0;
+    Fine = 0;
     set_tax();
     Deductions = Tax;
     Net_salary = Gross_Salary - Deductions;
+    Password = "123";
 }
 
 void Employee::make_id(){
     int a=0;
+    char c[5];
     for(int i = 0; i < Position.length(); i++){
-        if ((i==0 || Position[i-1]==' ' || Position[i-1]=='.')&&(a<2)){
-            ID.append(&Position[i]);
+        if (i==0 || Position[i-1]==' ' || Position[i-1]=='.'){
+            c[a] = Position[i];
+            ID.append(c);
             a++;
         }
     }
     string s;
     time_t now = time(0);
     tm ltm = *localtime(&now);
-    char c[5];
     strftime(c, 5, "%y", &ltm);
     s = c;
     ID.append(s);
@@ -100,15 +127,30 @@ void Employee::set_base_pay(){
 }
 
 void Employee::set_tax(){
-    for (int i = 0; i < 6; i++)
+    if (Gross_Salary <= taxes[0][0])
     {
-        if (Gross_Salary < taxes[i][0])
-        {
-            Tax = taxes[i][1] + (((Gross_Salary-taxes[i-1][0])*taxes[i][2])/100);
-        }
-        
+        Tax = 0;
     }
-    Tax = taxes[7][1] + (((Gross_Salary-taxes[6][0])*taxes[7][2])/100);
+    else if(Gross_Salary <= taxes[1][0])
+    {
+        Tax = abs(taxes[1][1] + (((Gross_Salary-taxes[0][0])*taxes[1][2])));
+    }
+    else if(Gross_Salary <= taxes[2][0])
+    {
+        Tax = abs(taxes[2][1] + (((Gross_Salary-taxes[1][0])*taxes[2][2])));
+    }
+    else if(Gross_Salary <= taxes[3][0])
+    {
+        Tax = abs(taxes[3][1] + (((Gross_Salary-taxes[2][0])*taxes[3][2])));
+    }
+    else if(Gross_Salary <= taxes[4][0])
+    {
+        Tax = abs(taxes[4][1] + (((Gross_Salary-taxes[3][0])*taxes[4][2])));
+    }
+    else if(Gross_Salary > taxes[4][0])
+    {
+        Tax = abs(taxes[5][1] + (((Gross_Salary-taxes[4][0])*taxes[5][2])));
+    }
 }
 
 void Employee::show()
@@ -164,5 +206,163 @@ void Employee::edit()
     default:
         edit();
         break;
+    }
+}
+
+void Employee::change_password()
+{
+    string pass;
+    cout<<"Enter new password:"<<endl;
+    getline(cin,pass);
+    Password = pass;
+}
+
+
+
+void get_employee_data()
+{
+    int srno;
+    string name, id, position, password;
+    float gross, base, bonus, deduction, tax, fine, net;
+    ifstream emp("Employee Data.csv");
+    getline(emp,name,'\n');
+    for(int i=0; !emp.eof(); i++){
+    srno=i+1;
+    getline(emp,id,'\t');
+    getline(emp,name,'\t');
+    getline(emp,position,'\t');
+    emp >> gross;
+    emp >> base;
+    emp >> bonus;
+    emp >> deduction;
+    emp >> tax;
+    emp >> fine;
+    emp >> net;
+    getline(emp,password,'\n');
+    employee.push_back(Employee(srno, name, id, position, gross, base, bonus, deduction, tax, fine, net, password));
+    }
+    emp.close();
+}
+
+void get_base_pays()
+{
+    string position; float pay;
+    pair<string,int> p;
+    ifstream bp("Base Pays.csv");
+    for(int i=0; !bp.eof(); i++){
+        getline(bp,position,'\n');
+        getline(bp,position,'\t');
+        bp >> pay;
+        p.first = position;
+        p.second = pay;
+        basepays.push_back(p);
+    }
+    bp.close();
+}
+
+void sort_employees()
+{
+    int n, min;
+    n = employee.size();
+    for (int i = 0; i < n - 1; i++) {
+        min = i;
+        for (int j = i + 1; j < n; j++) {
+            if (employee[j].ID < employee[min].ID){
+                swap(employee[min], employee[i]);
+            }
+        }
+    }
+
+    for (int i = 0; i < n; i++)
+    {
+        employee[i].Sr_No = i+1;
+    }
+}
+
+void save_employee_data()
+{
+    ofstream emp("Employee Data.csv");
+    for (int i = 0; i < employee.size(); i++)
+    {
+        emp<<"\n"<<employee[i].ID<<"\t"<<employee[i].Name<<"\t"<<employee[i].Position<<"\t"<<employee[i].Gross_Salary<<"\t"<<employee[i].Base_Salary<<"\t"<<employee[i].Bonus<<"\t"<<employee[i].Deductions<<"\t"<<employee[i].Tax<<"\t"<<employee[i].Fine<<"\t"<<employee[i].Net_salary<<"\t"<<employee[i].Password;
+    }
+    emp.close();
+}
+
+void search_by_id()
+{
+    string search;
+    Employee *emp;
+    cout<<"Enter ID : ";
+    getline(cin,search);
+    for (int i = 0; i < search.length(); i++)
+    {
+        search[i]=toupper(search[i]);
+    }
+    system("cls");
+    for (int i = 0; i < employee.size(); i++)
+    {
+        if (search == employee[i].ID)
+        {
+            emp = &employee[i];
+            break;
+        }
+    }
+    emp->show();
+}
+
+void search_by_name()
+{
+    string search;
+    cout<<"Enter name : ";
+    getline(cin,search);
+    set_case(search);
+    system("cls");
+    for (int i = 0; i < employee.size(); i++)
+    {
+        if (search == employee[i].Name)
+        {
+            searchV.push_back(employee[i]);
+        }
+        
+    }
+    for (int i = 0; i < searchV.size(); i++)
+    {
+        searchV[i].show();
+    }
+    
+}
+void search_by_position()
+{
+    string search;
+    cout<<"Enter position : ";
+    getline(cin,search);
+    set_case(search);
+    system("cls");
+    for (int i = 0; i < employee.size(); i++)
+    {
+        if (search == employee[i].Position)
+        {
+            searchV.push_back(employee[i]);
+        }
+        
+    }
+    for (int i = 0; i < searchV.size(); i++)
+    {
+        searchV[i].show();
+    }
+    
+}
+
+void set_case(string &str)
+{
+    for (int i = 0; i < str.length(); i++)
+    {
+        if (i==0 || str[i-1]==' ' || str[i-1]=='.'){
+            str[i]=toupper(str[i]);
+        }
+        else{
+            str[i]=tolower(str[i]);
+        }
     }
 }
