@@ -22,19 +22,19 @@ float taxes[6][3] = {{50000,0,0},
                     {500000,36250,0.275},
                     {00,91250,0.35}};
 
-void get_employee_data();
-void get_base_pays();
-void get_employee_data();
-void get_base_pays();
-void sort_employees();
-void save_employee_data();
+void get_employee_data();           // Read data from file
+void get_base_pays();               // 
+void sort_employees();      // sorts by ID
+void save_employee_data();        //write to file
 void search_by_id();
-void set_case(string &str);
+void set_case(string &str);     //Capitalize first letter of each word
+int today();        //Gives day of the year
+int get_time();
 
 class Employee
 {
 public:
-    int Sr_No;
+    int Sr_No, last_day, repoting_time = 800;
     string Name, ID, Position, Password;
     float Gross_Salary, Base_Salary, Bonus=0, Deductions,  Tax, Fine=0, Net_salary;
 public:
@@ -49,6 +49,8 @@ public:
     void display();
     void edit();
     void change_password();
+    void check_absent();        //Adds fine for absents except sunday
+    void check_late();
 };
 
 Employee::Employee(int srno, string name, string id, string position, float gross, float base, float bonus, float deduction, float tax, float fine, float net, string password)
@@ -217,6 +219,53 @@ void Employee::change_password()
     Password = pass;
 }
 
+void Employee::check_absent()
+{
+    int a = today() - last_day;
+    if (a!=0 && a!=1)
+    {
+        time_t now = time(0);
+        tm ltm = *localtime(&now);
+        if(ltm.tm_wday - 1 != 0){
+            a++;
+            Fine += a*1000;
+        }
+    }
+    
+}
+
+void Employee::check_late()
+{
+    int a = today() - last_day;
+    if(a!=0){
+        time_t now = time(0);
+        tm t = *localtime(&now);
+        t.tm_hour = 8;
+        t.tm_min = 0;
+        int reporting = mktime(&t);
+        float a = difftime(now, reporting);
+        a = a/3600;
+        if (a>0.25)
+        {
+            if (a<0.5)
+            {
+                Fine += 250;
+            }
+            else if (a<1)
+            {
+                Fine += 500;
+            }
+            else if (a<2)
+            {
+                Fine += 750;
+            }
+            else{
+                Fine += 1000;
+            }
+        }
+    }
+}
+
 
 
 void get_employee_data()
@@ -284,7 +333,7 @@ void save_employee_data()
     ofstream emp("Employee Data.csv");
     for (int i = 0; i < employee.size(); i++)
     {
-        emp<<"\n"<<employee[i].ID<<"\t"<<employee[i].Name<<"\t"<<employee[i].Position<<"\t"<<employee[i].Gross_Salary<<"\t"<<employee[i].Base_Salary<<"\t"<<employee[i].Bonus<<"\t"<<employee[i].Deductions<<"\t"<<employee[i].Tax<<"\t"<<employee[i].Fine<<"\t"<<employee[i].Net_salary<<"\t"<<employee[i].Password;
+        emp<<"\n"<<employee[i].ID<<"\t"<<employee[i].Name<<"\t"<<employee[i].Position<<"\t"<<employee[i].Gross_Salary<<"\t"<<employee[i].Base_Salary<<"\t"<<employee[i].Bonus<<"\t"<<employee[i].Deductions<<"\t"<<employee[i].Tax<<"\t"<<employee[i].Fine<<"\t"<<employee[i].Net_salary<<"\t"<<employee[i].Password<<today();
     }
     emp.close();
 }
@@ -365,4 +414,22 @@ void set_case(string &str)
             str[i]=tolower(str[i]);
         }
     }
+}
+
+int get_time()
+{
+    char t[5];
+    time_t now = time(0);
+    tm ltm = *localtime(&now);
+    strftime(t, 5, "%H%M", &ltm);
+    string s = t;
+    int a = stoi(s);
+    return a;
+}
+
+int today()
+{
+    time_t now = time(0);
+    tm ltm = *localtime(&now);
+    return ltm.tm_yday + 1;
 }

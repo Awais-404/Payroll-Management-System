@@ -8,8 +8,9 @@ main(){
     get_employee_data();
     get_base_pays();
     cout<<left;
-    employee.push_back(Employee("zain","clerk"));
-    Employee_portal();
+    cout<<get_time();
+    // employee.push_back(Employee("zain","clerk"));
+    // Employee_portal();
     // employee[3].display();
     return 0;
 }

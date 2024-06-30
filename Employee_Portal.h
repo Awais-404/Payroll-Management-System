@@ -64,6 +64,8 @@ void Employee_portal()
                 } while (op!=27);
             }else
             {
+                emp->check_absent();
+                emp->check_late();
                 do
                 {
                     system("cls");
