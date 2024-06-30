@@ -26,20 +26,20 @@ void get_employee_data();           // Read data from file
 void get_base_pays();               // 
 void sort_employees();      // sorts by ID
 void save_employee_data();        //write to file
+void save_base_pays();            //
 void search_by_id();
 void set_case(string &str);     //Capitalize first letter of each word
 int today();        //Gives day of the year
-int get_time();
 
 class Employee
 {
 public:
-    int Sr_No, last_day, repoting_time = 800;
+    int Sr_No, Last_Day;
     string Name, ID, Position, Password;
     float Gross_Salary, Base_Salary, Bonus=0, Deductions,  Tax, Fine=0, Net_salary;
 public:
     Employee(){}
-    Employee(int srno, string name, string id, string position, float gross, float base, float bonus, float deduction, float tax, float fine, float net, string password);
+    Employee(int srno, string name, string id, string position, float gross, float base, float bonus, float deduction, float tax, float fine, float net, string password, int last);
     Employee(string name, string position);
     void make_id();
     void set_base_pay();
@@ -53,7 +53,7 @@ public:
     void check_late();
 };
 
-Employee::Employee(int srno, string name, string id, string position, float gross, float base, float bonus, float deduction, float tax, float fine, float net, string password)
+Employee::Employee(int srno, string name, string id, string position, float gross, float base, float bonus, float deduction, float tax, float fine, float net, string password, int last)
 {
     Sr_No = srno;
     Name = name;
@@ -67,6 +67,7 @@ Employee::Employee(int srno, string name, string id, string position, float gros
     Deductions = deduction;
     Net_salary = net;
     Password = password;
+    Last_Day = last;
 }
 
 Employee::Employee(string name, string position)
@@ -221,7 +222,7 @@ void Employee::change_password()
 
 void Employee::check_absent()
 {
-    int a = today() - last_day;
+    int a = today() - Last_Day;
     if (a!=0 && a!=1)
     {
         time_t now = time(0);
@@ -236,7 +237,7 @@ void Employee::check_absent()
 
 void Employee::check_late()
 {
-    int a = today() - last_day;
+    int a = today() - Last_Day;
     if(a!=0){
         time_t now = time(0);
         tm t = *localtime(&now);
@@ -270,7 +271,7 @@ void Employee::check_late()
 
 void get_employee_data()
 {
-    int srno;
+    int srno, last;
     string name, id, position, password;
     float gross, base, bonus, deduction, tax, fine, net;
     ifstream emp("Employee Data.csv");
@@ -288,7 +289,8 @@ void get_employee_data()
     emp >> fine;
     emp >> net;
     getline(emp,password,'\n');
-    employee.push_back(Employee(srno, name, id, position, gross, base, bonus, deduction, tax, fine, net, password));
+    emp >> last;
+    employee.push_back(Employee(srno, name, id, position, gross, base, bonus, deduction, tax, fine, net, password, last));
     }
     emp.close();
 }
@@ -414,17 +416,6 @@ void set_case(string &str)
             str[i]=tolower(str[i]);
         }
     }
-}
-
-int get_time()
-{
-    char t[5];
-    time_t now = time(0);
-    tm ltm = *localtime(&now);
-    strftime(t, 5, "%H%M", &ltm);
-    string s = t;
-    int a = stoi(s);
-    return a;
 }
 
 int today()
