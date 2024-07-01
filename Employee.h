@@ -10,26 +10,35 @@
 using namespace std;
 
 class Employee;
-
-vector<Employee> employee;
-vector<Employee> searchV;
-Employee *emp;
-vector<pair<string,double>> basepays;
-float taxes[6][3] = {{50000,0,0},
-                    {100000,0,0.025},
-                    {200000,1250,0.125},
-                    {300000,13750,0.225},
-                    {500000,36250,0.275},
-                    {00,91250,0.35}};
-
-void get_employee_data();           // Read data from file
-void get_base_pays();               // 
-void sort_employees();      // sorts by ID
-void save_employee_data();        //write to file
-void save_base_pays();            //
-void search_by_id();
-void set_case(string &str);     //Capitalize first letter of each word
-int today();        //Gives day of the year
+class Data_Manager{
+public:
+    vector<Employee> employee;
+    vector<Employee> searchV;
+    Employee *emp;
+    vector<pair<string,double>> basepays;
+    float taxes[6][3] = {{50000,0,0},
+                        {100000,0,0.025},
+                        {200000,1250,0.125},
+                        {300000,13750,0.225},
+                        {500000,36250,0.275},
+                        {00,91250,0.35}};
+public:
+    Data_Manager(){
+        get_employee_data();
+        get_base_pays();
+    };
+    void get_employee_data();           // Read data from file
+    void get_base_pays();               // 
+    void sort_employees();      // sorts by ID
+    void save_employee_data();        //write to file
+    void save_base_pays();            //
+    void search_by_id();
+    void search_by_name();
+    void search_by_position();
+    void set_case(string &str);     //Capitalize first letter of each word
+    int today();        //Gives day of the year
+};
+Data_Manager DM;
 
 class Employee
 {
@@ -74,7 +83,7 @@ Employee::Employee(string name, string position)
 {
     Name = name;
     Position = position;
-    set_case(Position);
+    DM.set_case(Position);
     make_id();
     Bonus = 0;
     set_base_pay();
@@ -85,7 +94,7 @@ Employee::Employee(string name, string position)
     Deductions = Tax;
     Net_salary = Gross_Salary - Deductions;
     Password = "123";
-    Last_Day = today();
+    Last_Day = DM.today();
 }
 
 void Employee::make_id(){
@@ -105,8 +114,8 @@ void Employee::make_id(){
     s = c;
     ID.append(s);
     a=0;
-    for(int i = 0; i < employee.size(); i++){
-        if(Position == employee[i].Position){
+    for(int i = 0; i < DM.employee.size(); i++){
+        if(Position == DM.employee[i].Position){
             a++;
         }
     }
@@ -115,10 +124,10 @@ void Employee::make_id(){
 
 void Employee::set_base_pay(){
     bool found = false;
-    for (int i = 0; i < basepays.size(); i++)
+    for (int i = 0; i < DM.basepays.size(); i++)
     {
-        if(Position == basepays[i].first){
-            Base_Salary = basepays[i].second;
+        if(Position == DM.basepays[i].first){
+            Base_Salary = DM.basepays[i].second;
             found = true;
             break;
         }
@@ -131,29 +140,29 @@ void Employee::set_base_pay(){
 }
 
 void Employee::set_tax(){
-    if (Gross_Salary <= taxes[0][0])
+    if (Gross_Salary <= DM.taxes[0][0])
     {
         Tax = 0;
     }
-    else if(Gross_Salary <= taxes[1][0])
+    else if(Gross_Salary <= DM.taxes[1][0])
     {
-        Tax = abs(taxes[1][1] + (((Gross_Salary-taxes[0][0])*taxes[1][2])));
+        Tax = abs(DM.taxes[1][1] + (((Gross_Salary-DM.taxes[0][0])*DM.taxes[1][2])));
     }
-    else if(Gross_Salary <= taxes[2][0])
+    else if(Gross_Salary <= DM.taxes[2][0])
     {
-        Tax = abs(taxes[2][1] + (((Gross_Salary-taxes[1][0])*taxes[2][2])));
+        Tax = abs(DM.taxes[2][1] + (((Gross_Salary-DM.taxes[1][0])*DM.taxes[2][2])));
     }
-    else if(Gross_Salary <= taxes[3][0])
+    else if(Gross_Salary <= DM.taxes[3][0])
     {
-        Tax = abs(taxes[3][1] + (((Gross_Salary-taxes[2][0])*taxes[3][2])));
+        Tax = abs(DM.taxes[3][1] + (((Gross_Salary-DM.taxes[2][0])*DM.taxes[3][2])));
     }
-    else if(Gross_Salary <= taxes[4][0])
+    else if(Gross_Salary <= DM.taxes[4][0])
     {
-        Tax = abs(taxes[4][1] + (((Gross_Salary-taxes[3][0])*taxes[4][2])));
+        Tax = abs(DM.taxes[4][1] + (((Gross_Salary-DM.taxes[3][0])*DM.taxes[4][2])));
     }
-    else if(Gross_Salary > taxes[4][0])
+    else if(Gross_Salary > DM.taxes[4][0])
     {
-        Tax = abs(taxes[5][1] + (((Gross_Salary-taxes[4][0])*taxes[5][2])));
+        Tax = abs(DM.taxes[5][1] + (((Gross_Salary-DM.taxes[4][0])*DM.taxes[5][2])));
     }
 }
 
@@ -223,7 +232,7 @@ void Employee::change_password()
 
 void Employee::check_absent()
 {
-    int a = today() - Last_Day;
+    int a = DM.today() - Last_Day;
     if (a!=0 && a!=1)
     {
         time_t now = time(0);
@@ -238,7 +247,7 @@ void Employee::check_absent()
 
 void Employee::check_late()
 {
-    int a = today() - Last_Day;
+    int a = DM.today() - Last_Day;
     if(a!=0){
         time_t now = time(0);
         tm t = *localtime(&now);
@@ -270,7 +279,7 @@ void Employee::check_late()
 
 
 
-void get_employee_data()
+void Data_Manager::get_employee_data()
 {
     int srno, last;
     string name, id, position, password;
@@ -291,12 +300,12 @@ void get_employee_data()
     emp >> net;
     emp >> last;
     getline(emp,password,'\n');
-    employee.push_back(Employee(srno, name, id, position, gross, base, bonus, deduction, tax, fine, net, password, last));
+    DM.employee.push_back(Employee(srno, name, id, position, gross, base, bonus, deduction, tax, fine, net, password, last));
     }
     emp.close();
 }
 
-void get_base_pays()
+void Data_Manager::get_base_pays()
 {
     string position; float pay;
     pair<string,int> p;
@@ -307,41 +316,50 @@ void get_base_pays()
         bp >> pay;
         p.first = position;
         p.second = pay;
-        basepays.push_back(p);
+        DM.basepays.push_back(p);
     }
     bp.close();
 }
 
-void sort_employees()
+void Data_Manager::sort_employees()
 {
     int n, min;
-    n = employee.size();
+    n = DM.employee.size();
     for (int i = 0; i < n - 1; i++) {
         min = i;
         for (int j = i + 1; j < n; j++) {
-            if (employee[j].ID < employee[min].ID){
-                swap(employee[min], employee[i]);
+            if (DM.employee[j].ID < DM.employee[min].ID){
+                swap(DM.employee[min], DM.employee[i]);
             }
         }
     }
 
     for (int i = 0; i < n; i++)
     {
-        employee[i].Sr_No = i+1;
+        DM.employee[i].Sr_No = i+1;
     }
 }
 
-void save_employee_data()
+void Data_Manager::save_employee_data()
 {
     ofstream emp("Employee Data.csv");
-    for (int i = 0; i < employee.size(); i++)
+    for (int i = 0; i < DM.employee.size(); i++)
     {
-        emp<<"\n"<<employee[i].ID<<"\t"<<employee[i].Name<<"\t"<<employee[i].Position<<"\t"<<employee[i].Gross_Salary<<"\t"<<employee[i].Base_Salary<<"\t"<<employee[i].Bonus<<"\t"<<employee[i].Deductions<<"\t"<<employee[i].Tax<<"\t"<<employee[i].Fine<<"\t"<<employee[i].Net_salary<<"\t"<<today()<<"\t"<<employee[i].Password;
+        emp<<"\n"<<DM.employee[i].ID<<"\t"<<DM.employee[i].Name<<"\t"<<DM.employee[i].Position<<"\t"<<DM.employee[i].Gross_Salary<<"\t"<<DM.employee[i].Base_Salary<<"\t"<<DM.employee[i].Bonus<<"\t"<<DM.employee[i].Deductions<<"\t"<<DM.employee[i].Tax<<"\t"<<DM.employee[i].Fine<<"\t"<<DM.employee[i].Net_salary<<"\t"<<today()<<"\t"<<DM.employee[i].Password;
     }
     emp.close();
 }
 
-void search_by_id()
+void Data_Manager::save_base_pays()
+{
+    ofstream bp("Base Pays.csv");
+    for(int i=0; i < basepays.size(); i++){
+        bp<<"\n"<<basepays[i].first<<"\t"<<basepays[i].second;
+    }
+    bp.close();
+}
+
+void Data_Manager::search_by_id()
 {
     string search;
     Employee *emp;
@@ -352,61 +370,61 @@ void search_by_id()
         search[i]=toupper(search[i]);
     }
     system("cls");
-    for (int i = 0; i < employee.size(); i++)
+    for (int i = 0; i < DM.employee.size(); i++)
     {
-        if (search == employee[i].ID)
+        if (search == DM.employee[i].ID)
         {
-            emp = &employee[i];
+            emp = &DM.employee[i];
             break;
         }
     }
     emp->show();
 }
 
-void search_by_name()
+void Data_Manager::search_by_name()
 {
     string search;
     cout<<"Enter name : ";
     getline(cin,search);
-    set_case(search);
+    DM.set_case(search);
     system("cls");
-    for (int i = 0; i < employee.size(); i++)
+    for (int i = 0; i < DM.employee.size(); i++)
     {
-        if (search == employee[i].Name)
+        if (search == DM.employee[i].Name)
         {
-            searchV.push_back(employee[i]);
+            DM.searchV.push_back(DM.employee[i]);
         }
         
     }
-    for (int i = 0; i < searchV.size(); i++)
+    for (int i = 0; i < DM.searchV.size(); i++)
     {
-        searchV[i].show();
+        DM.searchV[i].show();
     }
     
 }
-void search_by_position()
+void Data_Manager::search_by_position()
 {
     string search;
     cout<<"Enter position : ";
     getline(cin,search);
     set_case(search);
     system("cls");
-    for (int i = 0; i < employee.size(); i++)
+    for (int i = 0; i < DM.employee.size(); i++)
     {
-        if (search == employee[i].Position)
+        if (search == DM.employee[i].Position)
         {
-            searchV.push_back(employee[i]);
+            DM.searchV.push_back(DM.employee[i]);
         }
         
     }
-    for (int i = 0; i < searchV.size(); i++)
+    for (int i = 0; i < DM.searchV.size(); i++)
     {
         searchV[i].show();
     }
     
 }
 
-void set_case(string &str)
+void Data_Manager::set_case(string &str)
 {
     for (int i = 0; i < str.length(); i++)
     {
@@ -419,7 +437,7 @@ void set_case(string &str)
     }
 }
 
-int today()
+int Data_Manager::today()
 {
     time_t now = time(0);
     tm ltm = *localtime(&now);

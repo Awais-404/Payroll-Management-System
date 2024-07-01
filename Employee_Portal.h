@@ -1,7 +1,5 @@
 #pragma once
-#include <iostream>
 #include "Employee.h"
-using namespace std;
 
 void Employee_portal()
 {
@@ -17,11 +15,11 @@ void Employee_portal()
         {
             id[i]=toupper(id[i]);
         }
-        for (int i = 0; i < employee.size(); i++)
+        for (int i = 0; i < DM.employee.size(); i++)
         {
-            if (id == employee[i].ID)
+            if (id == DM.employee[i].ID)
             {
-                emp = &employee[i];
+                DM.emp = &DM.employee[i];
                 found = true;
                 break;
             }
@@ -43,7 +41,7 @@ void Employee_portal()
             {
                 cout<<"Enter your password :"<<endl;
                 getline(cin,pass);
-                if (pass == emp->Password)
+                if (pass == DM.emp->Password)
                 {
                     break;
                 }
@@ -53,7 +51,7 @@ void Employee_portal()
                 }
             }
 
-            if (pass != emp->Password)
+            if (pass != DM.emp->Password)
             {
                 do
                 {
@@ -64,18 +62,18 @@ void Employee_portal()
                 } while (op!=27);
             }else
             {
-                emp->check_absent();
-                emp->check_late();
+                DM.emp->check_absent();
+                DM.emp->check_late();
                 do
                 {
                     system("cls");
-                    emp->display();
+                    DM.emp->display();
                     cout<<"Press 1 to change password"<<endl;
                     cout<<"Press Esc to exit"<<endl;
                     op = getch();
                     if (op == '1')
                     {
-                        emp->change_password();
+                        DM.emp->change_password();
                     }
                 } while (op!=27);
             }
