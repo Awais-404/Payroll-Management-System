@@ -85,6 +85,7 @@ Employee::Employee(string name, string position)
     Deductions = Tax;
     Net_salary = Gross_Salary - Deductions;
     Password = "123";
+    Last_Day = today();
 }
 
 void Employee::make_id(){
@@ -288,8 +289,8 @@ void get_employee_data()
     emp >> tax;
     emp >> fine;
     emp >> net;
-    getline(emp,password,'\n');
     emp >> last;
+    getline(emp,password,'\n');
     employee.push_back(Employee(srno, name, id, position, gross, base, bonus, deduction, tax, fine, net, password, last));
     }
     emp.close();
@@ -335,7 +336,7 @@ void save_employee_data()
     ofstream emp("Employee Data.csv");
     for (int i = 0; i < employee.size(); i++)
     {
-        emp<<"\n"<<employee[i].ID<<"\t"<<employee[i].Name<<"\t"<<employee[i].Position<<"\t"<<employee[i].Gross_Salary<<"\t"<<employee[i].Base_Salary<<"\t"<<employee[i].Bonus<<"\t"<<employee[i].Deductions<<"\t"<<employee[i].Tax<<"\t"<<employee[i].Fine<<"\t"<<employee[i].Net_salary<<"\t"<<employee[i].Password<<today();
+        emp<<"\n"<<employee[i].ID<<"\t"<<employee[i].Name<<"\t"<<employee[i].Position<<"\t"<<employee[i].Gross_Salary<<"\t"<<employee[i].Base_Salary<<"\t"<<employee[i].Bonus<<"\t"<<employee[i].Deductions<<"\t"<<employee[i].Tax<<"\t"<<employee[i].Fine<<"\t"<<employee[i].Net_salary<<"\t"<<today()<<"\t"<<employee[i].Password;
     }
     emp.close();
 }

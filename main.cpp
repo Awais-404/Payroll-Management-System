@@ -8,8 +8,8 @@ main(){
     get_employee_data();
     get_base_pays();
     cout<<left;
-    employee.push_back(Employee("zain","clerk"));
-    Employee_portal();
-    employee[3].display();
+    string s = "HELLO";
+    s = s.substr(0,s.length()-1);
+    cout<<s;
     return 0;
 }
