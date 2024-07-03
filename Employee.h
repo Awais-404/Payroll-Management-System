@@ -30,11 +30,12 @@ public:
     void get_employee_data();           // Read data from file
     void get_base_pays();               // 
     void sort_employees();      // sorts by ID
+    void sort_basepays();
     void save_employee_data();        //write to file
     void save_base_pays();            //
-    void search_by_id();
-    void search_by_name();
-    void search_by_position();
+    bool search_by_id(string search);
+    bool search_by_name(string search);
+    bool search_by_position(string search);
     void set_case(string &str);     //Capitalize first letter of each word
     int today();        //Gives day of the year
 };
@@ -136,6 +137,11 @@ void Employee::set_base_pay(){
     {
         cout<<"Position not found in data base\nEnter base salary for "<<Position<<" position"<<endl;
         cin>>Base_Salary;
+        pair<string,double> base;
+        base.first = Position;
+        base.second = Base_Salary;
+        DM.basepays.push_back(base);
+        DM.sort_basepays();
     }
 }
 
@@ -193,7 +199,7 @@ void Employee::edit()
     cout<<"choose which field you want to edit:"<<endl;
     cout<<"1-Name\t2-Position"<<endl;
     cout<<"3-Bonus\t4-Fine"<<endl;
-    cout<<"Press Esc to exit edit mode..."<<endl;
+    cout<<"Press Esc to exit"<<endl;
     int op = getch();
     switch (op)
     {
@@ -291,6 +297,7 @@ void Data_Manager::get_employee_data()
     getline(emp,id,'\t');
     getline(emp,name,'\t');
     getline(emp,position,'\t');
+    getline(emp,password,'\t');
     emp >> gross;
     emp >> base;
     emp >> bonus;
@@ -299,7 +306,6 @@ void Data_Manager::get_employee_data()
     emp >> fine;
     emp >> net;
     emp >> last;
-    getline(emp,password,'\n');
     DM.employee.push_back(Employee(srno, name, id, position, gross, base, bonus, deduction, tax, fine, net, password, last));
     }
     emp.close();
@@ -340,12 +346,26 @@ void Data_Manager::sort_employees()
     }
 }
 
+void Data_Manager::sort_basepays()
+{
+    int n, min;
+    n = DM.basepays.size();
+    for (int i = 0; i < n - 1; i++) {
+        min = i;
+        for (int j = i + 1; j < n; j++) {
+            if (DM.basepays[j].first < DM.basepays[min].first){
+                swap(DM.basepays[min], DM.basepays[i]);
+            }
+        }
+    }
+}
+
 void Data_Manager::save_employee_data()
 {
     ofstream emp("Employee Data.csv");
     for (int i = 0; i < DM.employee.size(); i++)
     {
-        emp<<"\n"<<DM.employee[i].ID<<"\t"<<DM.employee[i].Name<<"\t"<<DM.employee[i].Position<<"\t"<<DM.employee[i].Gross_Salary<<"\t"<<DM.employee[i].Base_Salary<<"\t"<<DM.employee[i].Bonus<<"\t"<<DM.employee[i].Deductions<<"\t"<<DM.employee[i].Tax<<"\t"<<DM.employee[i].Fine<<"\t"<<DM.employee[i].Net_salary<<"\t"<<today()<<"\t"<<DM.employee[i].Password;
+        emp<<"\n"<<DM.employee[i].ID<<"\t"<<DM.employee[i].Name<<"\t"<<DM.employee[i].Position<<"\t"<<DM.employee[i].Password<<"\t"<<DM.employee[i].Gross_Salary<<"\t"<<DM.employee[i].Base_Salary<<"\t"<<DM.employee[i].Bonus<<"\t"<<DM.employee[i].Deductions<<"\t"<<DM.employee[i].Tax<<"\t"<<DM.employee[i].Fine<<"\t"<<DM.employee[i].Net_salary<<"\t"<<today();
     }
     emp.close();
 }
@@ -359,69 +379,74 @@ void Data_Manager::save_base_pays()
     bp.close();
 }
 
-void Data_Manager::search_by_id()
+bool Data_Manager::search_by_id(string search)
 {
-    string search;
-    Employee *emp;
-    cout<<"Enter ID : ";
-    getline(cin,search);
+    bool found = false;
     for (int i = 0; i < search.length(); i++)
     {
         search[i]=toupper(search[i]);
     }
-    system("cls");
-    for (int i = 0; i < DM.employee.size(); i++)
+    for (int i = 0; i < employee.size(); i++)
     {
-        if (search == DM.employee[i].ID)
+        if (search == employee[i].ID)
         {
-            emp = &DM.employee[i];
+            emp = &employee[i];
+            found = true;
             break;
         }
     }
-    emp->show();
+    if (found)
+    {
+        system("cls");
+        emp->display();
+        emp->edit();
+    }
+    return found;
 }
 
-void Data_Manager::search_by_name()
+bool Data_Manager::search_by_name(string search)
 {
-    string search;
-    cout<<"Enter name : ";
-    getline(cin,search);
+    searchV.clear();
+    bool found = false;
     DM.set_case(search);
-    system("cls");
     for (int i = 0; i < DM.employee.size(); i++)
     {
         if (search == DM.employee[i].Name)
         {
             DM.searchV.push_back(DM.employee[i]);
+            found = true;
         }
-        
     }
-    for (int i = 0; i < DM.searchV.size(); i++)
-    {
-        DM.searchV[i].show();
+    if(found){
+        system("cls");
+        for (int i = 0; i < DM.searchV.size(); i++)
+        {
+            searchV[i].show();
+        }
     }
-    
+    return found;
 }
-void Data_Manager::search_by_position()
+bool Data_Manager::search_by_position(string search)
 {
-    string search;
-    cout<<"Enter position : ";
-    getline(cin,search);
+    searchV.clear();
+    bool found = false;
     set_case(search);
-    system("cls");
     for (int i = 0; i < DM.employee.size(); i++)
     {
         if (search == DM.employee[i].Position)
         {
-            DM.searchV.push_back(DM.employee[i]);
+            searchV.push_back(DM.employee[i]);
+            found = true;
         }
-        
     }
-    for (int i = 0; i < DM.searchV.size(); i++)
-    {
-        searchV[i].show();
+    if(found){
+        system("cls");
+        for (int i = 0; i < DM.searchV.size(); i++)
+        {
+            searchV[i].show();
+        }
     }
-    
+    return found;
 }
 
 void Data_Manager::set_case(string &str)
