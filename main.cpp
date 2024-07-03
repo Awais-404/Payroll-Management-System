@@ -7,5 +7,6 @@ main(){
     cout<<left;
     Admin_portal();
     cout<<"end";
+    getch();
     return 0;
 }

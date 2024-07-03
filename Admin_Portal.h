@@ -1,17 +1,16 @@
 #pragma once
 #include "Employee.h"
-// #include "main.cpp"
 
 
 string pass, star, password = "admin";
 bool repeat = false, quit = false, enter = false;
-
+void view_employee_list();
+void view_base_pays();
 void Admin_portal()
 {
     while (!quit && !enter)
     {
         system("cls");
-        // cout<<"\033[4m"<<"ADMIN PORTAL"<<"\033[24m"<<endl;
         if (repeat == false)
         {
         cout<<"Enter Password"<<endl;
@@ -49,12 +48,45 @@ void Admin_portal()
             break;
         }
     }
-    if (quit)
+
+
+    if(quit){}
+    else
     {
-        cout<<"quit";
+        system("cls");
+        cout<<"\033[4m"<<"ADMIN PORTAL"<<"\033[24m"<<endl;
+        cout<<"1-View employee list\t2-View base pays"<<endl;
+        char op = getch();
+        switch (op)
+        {
+        case '1':
+            view_employee_list();
+            break;
+        
+        case '2':
+            view_base_pays();
+            break;
+        
+        default:
+            break;
+        }
     }
-    else{
-        cout<<"enter";
+}
+
+void view_employee_list()
+{
+    cout<<"\033[4m"<<setw(10)<<"Sr_No"<<setw(20)<<"ID"<<setw(20)<<"Name"<<setw(15)<<"Position"<<"\033[24m"<<endl;
+    for (int i = 0; i < DM.employee.size(); i++)
+    {
+        DM.employee[i].show();
     }
-    
+}
+
+void view_base_pays()
+{
+    cout<<"\033[4m"<<setw(20)<<"Position"<<"Basepay"<<"\033[24m"<<endl;
+    for (int i = 0; i < DM.basepays.size(); i++)
+    {
+        cout<<setw(20)<<DM.basepays[i].first<<DM.basepays[i].second<<endl;
+    }
 }
