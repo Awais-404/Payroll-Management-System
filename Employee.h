@@ -291,8 +291,8 @@ void Data_Manager::get_employee_data()
     string name, id, position, password;
     float gross, base, bonus, deduction, tax, fine, net;
     ifstream emp("Employee Data.csv");
-    getline(emp,name,'\n');
     for(int i=0; !emp.eof(); i++){
+    getline(emp,name,'\n');
     srno=i+1;
     getline(emp,id,'\t');
     getline(emp,name,'\t');
