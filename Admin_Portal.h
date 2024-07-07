@@ -2,7 +2,6 @@
 #include "Employee.h"
 
 
-string pass, star, password = "admin";
 bool repeat, back, enter;
 void view_employee_list();
 void view_employee_details();
@@ -15,6 +14,7 @@ void edit_base_pays();
 
 void Admin_portal()
 {
+    string pass, star, password = "admin";
     repeat = false;
     back = false;
     enter = false;
@@ -23,13 +23,13 @@ void Admin_portal()
         system("cls");
         if (repeat == false)
         {
-        cout<<"Enter Password"<<endl;
+        cout<<setw(35)<<" "<<"Enter Password"<<endl;
         }
         else{
-            cout<<"Wrong Password, Try again"<<endl;
+            cout<<setw(35)<<" "<<"Wrong Password, Try again"<<endl;
         }    
-        cout<<star<<endl;
-        cout<<"\nPress Esc to Exit"<<endl;
+        cout<<setw(35)<<" "<<star<<endl;
+        cout<<"\n"<<setw(35)<<" "<<"Press Esc to Exit"<<endl;
         char c = getch();
         switch (c)
         {
@@ -65,9 +65,9 @@ void Admin_portal()
     {
         while(!back){
             system("cls");
-            cout<<"\033[4m"<<"ADMIN PORTAL"<<"\033[24m"<<endl;
-            cout<<"1-View employee list\t2-View base pays"<<endl;
-            cout<<"Esc-Exit"<<endl;
+            cout<<setw(50)<<" "<<"\033[4m"<<"ADMIN PORTAL"<<"\033[24m \n"<<endl;
+            cout<<setw(35)<<" "<<setw(30)<<"1-View employee list"<<"2-View base pays"<<endl;
+            cout<<setw(35)<<" "<<"Esc-Exit"<<endl;
             char op = getch();
             switch (op)
             {
@@ -101,7 +101,7 @@ void view_employee_list()
         {
             DM.employee[i].show();
         }
-        cout<<"1-View employee details\t2-Add new employee"<<endl;
+        cout<<"\n1-View employee details\t2-Add new employee"<<endl;
         cout<<"3-Remove employee\t4-Search employee"<<endl;
         cout<<"Esc-Exit"<<endl;
         char op = getch();
@@ -147,7 +147,7 @@ void view_base_pays()
         {
             cout<<setw(20)<<DM.basepays[i].first<<DM.basepays[i].second<<endl;
         }
-        cout<<"1-Edit list"<<endl;
+        cout<<"\n1-Edit list"<<endl;
         cout<<"Esc-Exit"<<endl;
         char op = getch();
         switch (op)
