@@ -1,6 +1,6 @@
-#include "Employee.h"
-#include "Employee_Portal.h"
-#include "Admin_Portal.h"
+#include "Employee.hpp"
+#include "Employee_Portal.hpp"
+#include "Admin_Portal.hpp"
 using namespace std;
 
 main(){

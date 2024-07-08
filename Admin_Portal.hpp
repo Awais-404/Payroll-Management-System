@@ -1,5 +1,5 @@
 #pragma once
-#include "Employee.h"
+#include "Employee.hpp"
 
 
 bool repeat, back, enter;
@@ -10,6 +10,7 @@ void remove_employee();
 void search_employee();
 void view_base_pays();
 void edit_base_pays();
+void remove_base_pay();
 
 
 void Admin_portal()
@@ -147,13 +148,18 @@ void view_base_pays()
         {
             cout<<setw(20)<<DM.basepays[i].first<<DM.basepays[i].second<<endl;
         }
-        cout<<"\n1-Edit list"<<endl;
+        cout<<"\n1-Edit list\t2-Remove Position"<<endl;
         cout<<"Esc-Exit"<<endl;
         char op = getch();
         switch (op)
         {
         case '1':
             edit_base_pays();
+            back = false;
+            break;
+
+        case '2':
+            remove_base_pay();
             back = false;
             break;
 
@@ -197,24 +203,37 @@ void add_employee()
 }
 void remove_employee()
 {
-    string search;
-    cout<<"Enter Employee ID:"<<endl;
-    getline(cin,search);
-    if (DM.search_by_id(search))
+    string id;
+    bool found = false;
+    int i;
+    cout<<"Enter ID:"<<endl;
+    getline(cin,id);
+    for (int i = 0; i < id.length(); i++)
+    {
+        id[i]=toupper(id[i]);
+    }
+    for (i = 0; i < DM.employee.size(); i++)
+    {
+        if (id == DM.employee[i].ID)
+        {
+            found = true;
+            break;
+        }
+    }
+    if(found)
+    {
+        for (int j = i; j < DM.employee.size(); j++)
+        {
+            DM.employee[j] = DM.employee[j+1];
+        }
+        DM.employee.erase(DM.employee.end());
+    }
+    else
     {
         system("cls");
-        vector<Employee>::iterator it;
-        int index = (DM.emp->Sr_No)-1;
-        swap(DM.employee[index], DM.employee[DM.employee.size()+1]);
-        it = DM.employee.end();
-        DM.employee.erase(it);
-        DM.sort_employees();
-    }
-    else{
-        system("cls");
-        cout<<"Employee not found.\nPress any key to continue..."<<endl;
+        cout<<"ID not found.\nPress any key to continue..."<<endl;
         getch();
-    }   
+    }
 }
 void search_employee()
 {
@@ -243,6 +262,7 @@ void edit_base_pays()
 {
     string position;
     double pay;
+    bool found = false;
     cout<<"Enter Postion:"<<endl;
     getline(cin,position);
     DM.set_case(position);
@@ -253,15 +273,53 @@ void edit_base_pays()
         {
             cout<<"Enter base pay for "<<position<<":"<<endl;
             cin>>pay;
+            cin.ignore();
             DM.basepays[i].second = pay;
-            exit;
+            found = true;
+            break;
         }
     }
-    cout<<"Enter base pay for "<<position<<":"<<endl;
-    cin>>pay;
-    pair<string,double> base;
-    base.first = position;
-    base.second = pay;
-    DM.basepays.push_back(base);
-    DM.sort_basepays();
+    if (!found)
+    {
+        cout<<"Enter base pay for "<<position<<":"<<endl;
+        cin>>pay;
+        cin.ignore();
+        pair<string,double> base;
+        base.first = position;
+        base.second = pay;
+        DM.basepays.push_back(base);
+        DM.sort_basepays();
+    }
+}
+
+void remove_base_pay()
+{
+    string position;
+    bool found = false;
+    int i;
+    cout<<"Enter Postion:"<<endl;
+    getline(cin,position);
+    DM.set_case(position);
+    for (i = 0; i < DM.basepays.size(); i++)
+    {
+        if (position == DM.basepays[i].first)
+        {
+            found = true;
+            break;
+        }
+    }
+    if(found)
+    {
+        for (int j = i; j < DM.basepays.size(); j++)
+        {
+            DM.basepays[j] = DM.basepays[j+1];
+        }
+        DM.basepays.erase(DM.basepays.end());
+    }
+    else
+    {
+        system("cls");
+        cout<<"Position not found.\nPress any key to continue..."<<endl;
+        getch();
+    }
 }

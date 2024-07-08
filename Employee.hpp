@@ -26,7 +26,7 @@ public:
     Data_Manager(){
         get_employee_data();
         get_base_pays();
-    };
+    }
     void get_employee_data();           // Read data from file
     void get_base_pays();               // 
     void sort_employees();      // sorts by ID
@@ -137,6 +137,7 @@ void Employee::set_base_pay(){
     {
         cout<<"Position not found in data base\nEnter base salary for "<<Position<<" position"<<endl;
         cin>>Base_Salary;
+        cin.ignore();
         pair<string,double> base;
         base.first = Position;
         base.second = Base_Salary;
@@ -206,10 +207,12 @@ void Employee::edit()
     case '1':
         cout<<"Enter new Name"<<endl;
         getline(cin,Name);
+        DM.set_case(Name);
         break;
     case '2':
         cout<<"Enter new Position"<<endl;
         getline(cin,Position);
+        DM.set_case(Position);
         break;
     case '3':
         cout<<"Enter new Bonus"<<endl;
@@ -335,7 +338,10 @@ void Data_Manager::sort_employees()
         min = i;
         for (int j = i + 1; j < n; j++) {
             if (DM.employee[j].ID < DM.employee[min].ID){
-                swap(DM.employee[min], DM.employee[i]);
+                Employee temp = employee[j];
+                employee[j] = employee[min];
+                employee[min] = temp;
+                // swap(DM.employee[min], DM.employee[i]);
             }
         }
     }
