@@ -100,7 +100,7 @@ void Admin_Portal::view_employee_list()
 {
     while(!back){
         system("cls");
-        cout<<"\033[4m"<<setw(10)<<"Sr_No"<<setw(20)<<"ID"<<setw(20)<<"Name"<<setw(15)<<"Position"<<"\033[24m"<<endl;
+        cout<<"\033[4m"<<setw(10)<<"Sr. No"<<setw(20)<<"ID"<<setw(20)<<"Name"<<setw(15)<<"Position"<<"\033[24m"<<endl;
         for (int i = 0; i < DM.employee.size(); i++)
         {
             DM.employee[i].show();

@@ -30,7 +30,6 @@ public:
     void get_employee_data();           // Read data from file
     void get_base_pays();               // 
     void sort_employees();      // sorts by ID
-    void sort_basepays();
     void save_employee_data();        //write to file
     void save_base_pays();            //
     bool search_by_id(string search);
@@ -159,7 +158,6 @@ void Employee::set_base_pay(){
         base.first = Position;
         base.second = Base_Salary;
         DM.basepays.push_back(base);
-        DM.sort_basepays();
     }
 }
 
@@ -366,20 +364,6 @@ void Data_Manager::sort_employees()
     for (int i = 0; i < n; i++)
     {
         DM.employee[i].Sr_No = i+1;
-    }
-}
-
-void Data_Manager::sort_basepays()
-{
-    int n, min;
-    n = DM.basepays.size();
-    for (int i = 0; i < n - 1; i++) {
-        min = i;
-        for (int j = i + 1; j < n; j++) {
-            if (DM.basepays[j].first < DM.basepays[min].first){
-                swap(DM.basepays[min], DM.basepays[i]);
-            }
-        }
     }
 }
 
