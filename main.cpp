@@ -6,6 +6,8 @@ using namespace std;
 main(){
     bool quit = false;
     cout<<left;
+    Admin_Portal admin;
+    Employee_Portal employee;
     while(!quit){
         system("cls");
         cout<<setw(45)<<" "<<"\033[4m"<<"PAYROLL MANAGEMENT SYSTEM"<<"\033[24m  \n"<<endl;
@@ -15,11 +17,11 @@ main(){
         switch (op)
         {
         case '1':
-            Employee_portal();
+            employee.employee_portal();
             break;
         
         case '2':
-            Admin_portal();
+            admin.admin_portal();
             break;
         
         case 27:

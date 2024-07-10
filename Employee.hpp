@@ -84,6 +84,7 @@ Employee::Employee(string name, string position)
 {
     Name = name;
     Position = position;
+    DM.set_case(Name);
     DM.set_case(Position);
     make_id();
     Bonus = 0;
@@ -99,24 +100,40 @@ Employee::Employee(string name, string position)
 }
 
 void Employee::make_id(){
-    int a=0;
+    int a=0,r=0;
     char c[5];
+    string temp="";
     for(int i = 0; i < Position.length(); i++){
         if (i==0 || Position[i-1]==' ' || Position[i-1]=='.'){
-            c[a] = Position[i];
-            ID.append(c);
+            temp += Position[i];
             a++;
         }
     }
-    string s;
+    ID.append(temp);
+    for(int i = 0; i < DM.basepays.size(); i++){
+        temp = "";
+        a=0;
+        if(Position == DM.basepays[i].first){break;}
+        for(int j = 0; j < DM.basepays[i].first.length(); j++){
+            if (j==0 || DM.basepays[i].first[j-1]==' ' || DM.basepays[i].first[j-1]=='.'){
+                temp += DM.basepays[i].first[j];
+                a++;
+            }
+        }
+        if(ID == temp){
+            r++;
+        }
+    }
+    ID.append(to_string(r+1));
+
     time_t now = time(0);
     tm ltm = *localtime(&now);
     strftime(c, 5, "%y", &ltm);
-    s = c;
-    ID.append(s);
+    ID.append(c);
+
     a=0;
     for(int i = 0; i < DM.employee.size(); i++){
-        if(Position == DM.employee[i].Position){
+        if(ID == DM.employee[i].ID.substr(0,ID.length())){
             a++;
         }
     }

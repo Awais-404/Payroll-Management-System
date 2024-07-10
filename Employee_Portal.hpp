@@ -1,11 +1,15 @@
 #pragma once
 #include "Employee.hpp"
 
-bool check_id(string search);
-void get_password();
-void show_account();
+class Employee_Portal{
+public:
+    void employee_portal();
+    bool check_id(string search);
+    void get_password();
+    void show_account();
+};
 
-void Employee_portal()
+void Employee_Portal::employee_portal()
 {
     bool repeat, back, enter;
     string id;
@@ -50,7 +54,7 @@ void Employee_portal()
     }
 }
 
-bool check_id(string search){
+bool Employee_Portal::check_id(string search){
     bool found = false;
     for (int i = 0; i < search.length(); i++)
     {
@@ -68,7 +72,7 @@ bool check_id(string search){
     return found;
 }
 
-void get_password(){
+void Employee_Portal::get_password(){
     bool repeat=false, back=false, enter=false;
     string pass, star;
     while (!back && !enter)
@@ -113,7 +117,7 @@ void get_password(){
     }
 }
 
-void show_account(){
+void Employee_Portal::show_account(){
     DM.emp->check_absent();
     DM.emp->check_late();
     bool back;

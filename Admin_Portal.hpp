@@ -1,19 +1,22 @@
 #pragma once
 #include "Employee.hpp"
 
+class Admin_Portal{
+private:
+    bool repeat, back, enter;
+public:
+    void admin_portal();
+    void view_employee_list();
+    void view_employee_details();
+    void add_employee();
+    void remove_employee();
+    void search_employee();
+    void view_base_pays();
+    void edit_base_pays();
+    void remove_base_pay();
+};
 
-bool repeat, back, enter;
-void view_employee_list();
-void view_employee_details();
-void add_employee();
-void remove_employee();
-void search_employee();
-void view_base_pays();
-void edit_base_pays();
-void remove_base_pay();
-
-
-void Admin_portal()
+void Admin_Portal::admin_portal()
 {
     string pass, star, password = "admin";
     repeat = false;
@@ -93,7 +96,7 @@ void Admin_portal()
     }
 }
 
-void view_employee_list()
+void Admin_Portal::view_employee_list()
 {
     while(!back){
         system("cls");
@@ -139,7 +142,7 @@ void view_employee_list()
     }
 }
 
-void view_base_pays()
+void Admin_Portal::view_base_pays()
 {
     while(!back){
         system("cls");
@@ -174,7 +177,7 @@ void view_base_pays()
     }
 }
 
-void view_employee_details()
+void Admin_Portal::view_employee_details()
 {
     string search;
     cout<<"Enter Employee ID:"<<endl;
@@ -187,7 +190,7 @@ void view_employee_details()
     }
 
 }
-void add_employee()
+void Admin_Portal::add_employee()
 {
     string name,id;
     cout<<"Enter employee name:"<<endl;
@@ -200,8 +203,9 @@ void add_employee()
     DM.emp->display();
     DM.emp->edit();
     DM.sort_employees();
+    DM.save_employee_data();
 }
-void remove_employee()
+void Admin_Portal::remove_employee()
 {
     string id;
     bool found = false;
@@ -227,6 +231,7 @@ void remove_employee()
             DM.employee[j] = DM.employee[j+1];
         }
         DM.employee.erase(DM.employee.end());
+        DM.save_employee_data();
     }
     else
     {
@@ -235,7 +240,7 @@ void remove_employee()
         getch();
     }
 }
-void search_employee()
+void Admin_Portal::search_employee()
 {
    string search;
     cout<<"Enter Employee ID or Name/Position:"<<endl;
@@ -258,7 +263,7 @@ void search_employee()
     }
 }
 
-void edit_base_pays()
+void Admin_Portal::edit_base_pays()
 {
     string position;
     double pay;
@@ -288,11 +293,11 @@ void edit_base_pays()
         base.first = position;
         base.second = pay;
         DM.basepays.push_back(base);
-        DM.sort_basepays();
     }
+    DM.save_base_pays();
 }
 
-void remove_base_pay()
+void Admin_Portal::remove_base_pay()
 {
     string position;
     bool found = false;
@@ -315,6 +320,7 @@ void remove_base_pay()
             DM.basepays[j] = DM.basepays[j+1];
         }
         DM.basepays.erase(DM.basepays.end());
+        DM.save_base_pays();
     }
     else
     {
