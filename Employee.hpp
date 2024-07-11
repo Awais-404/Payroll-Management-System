@@ -228,6 +228,7 @@ void Employee::edit()
         cout<<"Enter new Position"<<endl;
         getline(cin,Position);
         DM.set_case(Position);
+        *this = Employee(Name, Position);
         break;
     case '3':
         cout<<"Enter new Bonus"<<endl;
