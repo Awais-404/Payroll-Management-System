@@ -260,11 +260,21 @@ void Employee::check_absent()
     int a = DM.today() - Last_Day;
     if (a!=0 && a!=1)
     {
-        time_t now = time(0);
-        tm ltm = *localtime(&now);
-        if(ltm.tm_wday - 1 != 0){
-            a++;
+        if(a < 7)
+        {
+            time_t now = time(0);
+            tm ltm = *localtime(&now);
+            if(ltm.tm_wday - a < 1){
+                a--;
+            }
             Fine += a*1000;
+        }
+        else if(a >=7 && a < 14){
+            a--;
+            Fine += a*1500;
+        }
+        else{
+            Fine = Net_salary;
         }
     }
     
