@@ -120,7 +120,7 @@ void Employee_Portal::get_password(){
 void Employee_Portal::show_account(){
     DM.emp->check_absent();
     DM.emp->check_late();
-    bool back;
+    bool back = false;
     while (!back)
     {
         system("cls");
