@@ -3,7 +3,7 @@
 
 class Admin_Portal{
 private:
-    bool repeat, back, enter;
+    bool repeat = false, back = false, enter = false;
 public:
     void admin_portal();
     void view_employee_list();

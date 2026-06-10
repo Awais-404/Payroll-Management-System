@@ -11,7 +11,7 @@ public:
 
 void Employee_Portal::employee_portal()
 {
-    bool repeat, back, enter;
+    bool repeat = false, back = false, enter = false;
     string id;
     char c;
     while(!back){
